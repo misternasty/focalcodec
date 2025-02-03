@@ -1,6 +1,6 @@
 # FocalCodec
 
-A low-bitrate 16 kHz speech codec based on [focal modulation networks](https://arxiv.org/abs/2203.11926).
+A low-bitrate 16 kHz speech codec based on [focal modulation](https://arxiv.org/abs/2203.11926).
 
 ---------------------------------------------------------------------------------------------------------
 
