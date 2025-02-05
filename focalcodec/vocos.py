@@ -14,7 +14,7 @@
 # limitations under the License.
 # ==============================================================================
 
-"""Vocos with support for jitting."""
+"""Vocos (see https://arxiv.org/abs/2306.00814) with support for jitting."""
 
 # Adapted from:
 # https://github.com/gemelo-ai/vocos/tree/v0.1.0/vocos/heads.py

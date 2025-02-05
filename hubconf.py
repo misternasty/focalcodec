@@ -18,7 +18,7 @@
 
 from typing import Any
 
-from focalcodec.codec import FocalCodec
+from focalcodec import FocalCodec
 
 
 # Make sure it is consistent with requirements.txt and README.md
@@ -39,9 +39,14 @@ def focalcodec(
     Parameters
     ----------
     config:
-        The configuration.
+        Path to the configuration file. This can be either:
+        - A local JSON file;
+        - a JSON file hosted on Hugging Face Hub (e.g. "username/repo_name/config.json").
+        `.json` is automatically appended if the given path does not end with `.json`.
     pretrained:
-        True to load the pretrained model weights, False otherwise.
+        Whether to load the corresponding pretrained checkpoint. If True, the method will look for a
+        checkpoint file with the same path/URL as the configuration file but with a `.safetensors` or
+        `.pt` extension.
 
     """
     codec = FocalCodec.from_config(config, pretrained, **kwargs)

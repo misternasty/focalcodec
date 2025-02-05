@@ -14,7 +14,7 @@
 # limitations under the License.
 # ==============================================================================
 
-"""FocalCodec implementation with support for jitting."""
+"""FocalCodec with support for jitting."""
 
 import json
 import os
@@ -138,7 +138,7 @@ class FocalCodec(nn.Module):
         The configuration can be either a local JSON file or a JSON file hosted on Hugging Face Hub.
         If `pretrained` is set to True, the corresponding pretrained checkpoint is also loaded.
         The checkpoint is expected to have the same path and name as the configuration file
-        but with a `.safetensors` extension.
+        but with a `.safetensors` or `.pt` extension.
 
         Parameters
         ----------
@@ -146,9 +146,11 @@ class FocalCodec(nn.Module):
             Path to the configuration file. This can be either:
             - A local JSON file;
             - a JSON file hosted on Hugging Face Hub (e.g. "username/repo_name/config.json").
+            `.json` is automatically appended if the given path does not end with `.json`.
         pretrained:
             Whether to load the corresponding pretrained checkpoint. If True, the method will look for a
-            checkpoint file with the same path/URL as the configuration file but with a `.safetensors` extension.
+            checkpoint file with the same path/URL as the configuration file but with a `.safetensors` or
+            `.pt` extension.
         kwargs:
             Additional keyword arguments to pass to the Hugging Face Hub downloader if
             fetching the configuration from a remote repository.
@@ -168,42 +170,57 @@ class FocalCodec(nn.Module):
             config_json = config
         else:
             config_json = f"{config}.json"
+
+        # Local
         if os.path.exists(config_json):
             with open(config_json) as f:
                 config = json.load(f)
             model = cls(**config)
             if pretrained:
-                checkpoint = f"{os.path.splitext(config_json)[0]}.safetensors"
-                state_dict = safetensors_load(checkpoint)
+                try:
+                    checkpoint = f"{os.path.splitext(config_json)[0]}.safetensors"
+                    state_dict = safetensors_load(checkpoint)
+                except Exception:
+                    # If `.safetensors` not found, try `.pt`
+                    checkpoint = f"{os.path.splitext(config_json)[0]}.pt"
+                    state_dict = torch.load(checkpoint, map_location="cpu")
                 model.load_state_dict(state_dict)
-        else:
-            try:
-                from huggingface_hub import hf_hub_download
-            except ImportError:
-                raise ImportError("`pip install huggingface-hub` to run this script")
+            return model
 
-            try:
-                repo_id = os.path.dirname(config_json)
-                filename = os.path.basename(config_json)
-                config_json = hf_hub_download(
-                    repo_id=repo_id, filename=filename, **kwargs
-                )
-                with open(config_json) as f:
-                    config = json.load(f)
-                model = cls(**config)
-                if pretrained:
+        # Remote
+        try:
+            from huggingface_hub import hf_hub_download
+        except ImportError:
+            raise ImportError("`pip install huggingface-hub` to load this model")
+
+        try:
+            repo_id = os.path.dirname(config_json)
+            filename = os.path.basename(config_json)
+            config_json = hf_hub_download(repo_id=repo_id, filename=filename, **kwargs)
+            with open(config_json) as f:
+                config = json.load(f)
+            model = cls(**config)
+            if pretrained:
+                try:
                     filename = f"{os.path.splitext(filename)[0]}.safetensors"
                     checkpoint = hf_hub_download(
                         repo_id=repo_id, filename=filename, **kwargs
                     )
                     state_dict = safetensors_load(checkpoint)
-                    model.load_state_dict(state_dict)
-            except Exception as e:
-                raise RuntimeError(
-                    f"Could not load the specified configuration. "
-                    f"Default configurations can be found at the following Hugging Face repository: {REPO_ID}."
-                ) from e
-
+                except Exception:
+                    # If `.safetensors` not found, try `.pt`
+                    filename = f"{os.path.splitext(filename)[0]}.pt"
+                    checkpoint = hf_hub_download(
+                        repo_id=repo_id, filename=filename, **kwargs
+                    )
+                    state_dict = torch.load(checkpoint, map_location="cpu")
+                model.load_state_dict(state_dict)
+        except Exception as e:
+            raise RuntimeError(
+                f"Could not load the specified configuration. "
+                f"Default configurations can be found at the following "
+                f"Hugging Face repository: https://huggingface.co/{REPO_ID}"
+            ) from e
         return model
 
     @classmethod

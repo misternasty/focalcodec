@@ -1,6 +1,9 @@
 # FocalCodec
 
-A low-bitrate 16 kHz speech codec based on [focal modulation](https://arxiv.org/abs/2203.11926).
+![License](https://img.shields.io/github/license/lucadellalib/focalcodec)
+![Stars](https://img.shields.io/github/stars/lucadellalib/focalcodec?style=social)
+
+A low-bitrate single-codebook 16 kHz speech codec based on [focal modulation](https://arxiv.org/abs/2203.11926).
 
 ---------------------------------------------------------------------------------------------------------
 
@@ -22,24 +25,69 @@ We use `torch.hub` to make loading the model easy (no need to clone the reposito
 import torch
 import torchaudio
 
-# Load FocalCodec model
+# Load FocalCodec model (see available configurations at https://huggingface.co/lucadellalib/focalcodec)
 config = "lucadellalib/focalcodec/LibriTTS960_50Hz"
 codec = torch.hub.load("lucadellalib/focalcodec", "focalcodec", config=config)
 codec.eval().requires_grad_(False)
 
 # Load and preprocess the input audio
-sig, sample_rate = torchaudio.load("<path-to-audio-file>")
+audio_file = "audio-samples/librispeech-dev-clean/251-118436-0003.wav"
+sig, sample_rate = torchaudio.load(audio_file)
 sig = torchaudio.functional.resample(sig, sample_rate, codec.sample_rate)
 
-# Encode and decode the audio
-toks = codec.sig_to_toks(sig)
+# Encode audio into tokens
+toks = codec.sig_to_toks(sig)  # Shape: (batch, time)
+print(toks.shape)
+print(toks)
+
+# Convert tokens to their corresponding binary codes
+codes = codec.toks_to_codes(toks)  # Shape: (batch, time, log2 codebook_size)
+print(codes.shape)
+print(codes)
+
+# Decode tokens back into a waveform
 rec_sig = codec.toks_to_sig(toks)
 
 # Save the reconstructed audio
-torchaudio.save("reconstruction.wav", rec_sig, codec.sample_rate)
+rec_sig = torchaudio.functional.resample(rec_sig, codec.sample_rate, sample_rate)
+torchaudio.save("reconstruction.wav", rec_sig, sample_rate)
 ```
 
-For more details and example usage, see `demo.py`.
+Alternatively, you can install FocalCodec as a standard Python package using `pip`:
+
+```bash
+pip install focalcodec @ git+https://github.com/lucadellalib/focalcodec.git@main#egg=focalcodec
+```
+
+Once installed, you can import it in your scripts:
+
+```python
+import focalcodec
+
+config = "lucadellalib/focalcodec/LibriTTS960_50Hz"
+codec = focalcodec.FocalCodec.from_pretrained(config)
+```
+
+---------------------------------------------------------------------------------------------------------
+
+## 🎤 Running the Demo Script
+
+**Speech Resynthesis**
+
+```bash
+python demo.py \
+--input_file audio-samples/librispeech-dev-clean/251-118436-0003.wav \
+--output_file reconstruction.wav
+```
+
+**Voice Conversion**
+
+```bash
+python demo.py \
+--input_file audio-samples/librispeech-dev-clean/251-118436-0003.wav \
+--output_file reconstruction.wav \
+--reference_files audio-samples/librispeech-dev-clean/84
+```
 
 ---------------------------------------------------------------------------------------------------------
 

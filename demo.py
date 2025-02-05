@@ -16,21 +16,19 @@
 # limitations under the License.
 # ==============================================================================
 
-"""FocalCodec demo for speech resynthesis and voice conversion."""
-
-# Speech resynthesis:
-# python demo.py audio-samples/librispeech-dev-clean/251-118436-0003.wav
-
-# Voice conversion:
-# python demo.py audio-samples/librispeech-dev-clean/251-118436-0003.wav --reference_files audio-samples/librispeech-dev-clean/84
-
+"""FocalCodec demo."""
 
 import argparse
 import os
 from typing import Optional, Sequence
 
 import torch
-import torchaudio
+
+
+try:
+    import torchaudio
+except ImportError:
+    raise ImportError("`pip install torchaudio` to run this script")
 
 
 __all__ = []
@@ -42,7 +40,7 @@ def main(
     config: "str" = "lucadellalib/focalcodec/LibriTTS960_50Hz",
     reference_files: "Optional[Sequence[str]]" = None,
 ) -> "None":
-    # Load FocalCodec model
+    # Load FocalCodec model (see available configurations at https://huggingface.co/lucadellalib/focalcodec)
     codec = torch.hub.load("lucadellalib/focalcodec", "focalcodec", config=config)
     codec.eval().requires_grad_(False)
 
@@ -93,33 +91,31 @@ def main(
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="FocalCodec demo for speech resynthesis and voice conversion."
-    )
+    parser = argparse.ArgumentParser(description="FocalCodec demo")
 
     parser.add_argument(
-        "input_file",
+        "--input_file",
         type=str,
-        help="Path to the input audio file.",
+        help="path to the input audio file",
     )
     parser.add_argument(
         "--output_file",
         type=str,
         default="reconstruction.wav",
-        help="Path to save the reconstructed audio file.",
+        help="path to save the reconstructed audio file",
     )
     parser.add_argument(
         "--config",
         type=str,
         default="lucadellalib/focalcodec/LibriTTS960_50Hz",
-        help="FocalCodec configuration.",
+        help="FocalCodec configuration",
     )
     parser.add_argument(
         "--reference_files",
         type=str,
         nargs="+",  # Allows specifying multiple files or directories
         default=None,
-        help="Path(s) to reference audio files or a directory containing reference files.",
+        help="path(s) to reference audio files or a directory containing reference audio files",
     )
 
     args = parser.parse_args()
