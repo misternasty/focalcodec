@@ -9,7 +9,7 @@ A low-bitrate single-codebook 16 kHz speech codec based on [focal modulation](ht
 
 ## 🛠️️ Installation
 
-First of all, install [Python 3.8 or later](https://www.python.org). Open a terminal and run:
+First of all, install [Python 3.8 or later](https://www.python.org). Then, open a terminal and run:
 
 ```
 pip install huggingface-hub safetensors torch torchaudio
@@ -19,7 +19,9 @@ pip install huggingface-hub safetensors torch torchaudio
 
 ## ▶️ Quickstart
 
-We use `torch.hub` to make loading the model easy (no need to clone the repository):
+📌 **NOTE**: the `audio-samples` directory contains downloadable audio samples that you can use to test the codec.
+
+You can easily load the model using `torch.hub` without cloning the repository:
 
 ```python
 import torch
@@ -40,7 +42,7 @@ toks = codec.sig_to_toks(sig)  # Shape: (batch, time)
 print(toks.shape)
 print(toks)
 
-# Convert tokens to their corresponding binary codes
+# Convert tokens to their corresponding binary spherical codes
 codes = codec.toks_to_codes(toks)  # Shape: (batch, time, log2 codebook_size)
 print(codes.shape)
 print(codes)
@@ -67,6 +69,8 @@ import focalcodec
 config = "lucadellalib/focalcodec/LibriTTS960_50Hz"
 codec = focalcodec.FocalCodec.from_pretrained(config)
 ```
+
+Check the code documentation for more details on model usage and available configurations.
 
 ---------------------------------------------------------------------------------------------------------
 
