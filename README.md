@@ -5,6 +5,8 @@
 
 A low-bitrate single-codebook 16 kHz speech codec based on [focal modulation](https://arxiv.org/abs/2203.11926).
 
+<img src="docs/_static/images/focalcodec.png" width="700">
+
 ---------------------------------------------------------------------------------------------------------
 
 ## 🛠️️ Installation

@@ -54,28 +54,31 @@ REPO_ID = "lucadellalib/focalcodec"
 class FocalCodec(nn.Module):
     """FocalCodec.
 
+    This class initializes a flexible speech codec system, allowing customizable
+    components for encoding, compression, quantization, decompression, and decoding.
+
     Parameters
     ----------
     encoder_name:
         Encoder registered name (see `REGISTRY`).
     encoder_config:
-        Encoder configuration.
+        Encoder configuration, i.e. keyword arguments for initializing the encoder.
     compressor_name:
         Compressor registered name (see `REGISTRY`).
     compressor_config:
-        Compressor configuration.
+        Compressor configuration, i.e. keyword arguments for initializing the compressor.
     quantizer_name:
         Quantizer registered name (see `REGISTRY`).
     quantizer_config:
-        Quantizer configuration.
+        Quantizer configuration, i.e. keyword arguments for initializing the quantizer.
     decompressor_name:
         Decompressor registered name (see `REGISTRY`).
     decompressor_config:
-        Decompressor configuration.
+        Decompressor configuration, i.e. keyword arguments for initializing the decompressor.
     decoder_name:
         Decoder registered name (see `REGISTRY`).
     decoder_config:
-        Decoder configuration.
+        Decoder configuration, i.e. keyword arguments for initializing the decoder.
 
     """
 
