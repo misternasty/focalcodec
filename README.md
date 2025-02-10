@@ -66,7 +66,7 @@ torchaudio.save("reconstruction.wav", rec_sig, sample_rate)
 Alternatively, you can install FocalCodec as a standard Python package using `pip`:
 
 ```bash
-pip install focalcodec @ git+https://github.com/lucadellalib/focalcodec.git@main#egg=focalcodec
+pip install focalcodec@git+https://github.com/lucadellalib/focalcodec.git@main#egg=focalcodec
 ```
 
 Once installed, you can import it in your scripts:
@@ -83,6 +83,8 @@ Check the code documentation for more details on model usage and available confi
 ---------------------------------------------------------------------------------------------------------
 
 ## 🎤 Running the Demo Script
+
+Clone or download and extract the repository, navigate to `<path-to-repository>`, open a terminal and run:
 
 **Speech Resynthesis**
 
