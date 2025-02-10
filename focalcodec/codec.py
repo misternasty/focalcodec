@@ -14,7 +14,7 @@
 # limitations under the License.
 # ==============================================================================
 
-"""FocalCodec with support for jitting."""
+"""FocalCodec (see https://arxiv.org/abs/2502.04465) with support for jitting."""
 
 import json
 import os

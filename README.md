@@ -5,7 +5,7 @@
 
 A low-bitrate single-codebook 16 kHz speech codec based on [focal modulation](https://arxiv.org/abs/2203.11926).
 
-- **Preprint**:
+- **Preprint**: https://arxiv.org/abs/2502.04465
 
 - **Project Page**: https://lucadellalib.github.io/focalcodec-web/
 
@@ -107,10 +107,10 @@ python demo.py \
 
 ```
 @article{dellalibera2025focalcodec,
-  title   = {{FocalCodec}: Low-Bitrate Speech Coding via Focal Modulation Networks},
-  author  = {Luca {Della Libera} and Francesco Paissan and Cem Subakan and Mirco Ravanelli},
-  journal = {arXiv preprint arXiv:x.y},
-  year    = {2025},
+    title   = {{FocalCodec}: Low-Bitrate Speech Coding via Focal Modulation Networks},
+    author  = {Luca {Della Libera} and Francesco Paissan and Cem Subakan and Mirco Ravanelli},
+    journal = {arXiv preprint arXiv:2502.04465},
+    year    = {2025},
 }
 ```
 
