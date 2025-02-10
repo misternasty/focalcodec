@@ -20,7 +20,7 @@ A low-bitrate single-codebook 16 kHz speech codec based on [focal modulation](ht
 First of all, install [Python 3.8 or later](https://www.python.org). Then, open a terminal and run:
 
 ```
-pip install huggingface-hub safetensors torch torchaudio
+pip install huggingface-hub safetensors soundfile torch torchaudio
 ```
 
 ---------------------------------------------------------------------------------------------------------
