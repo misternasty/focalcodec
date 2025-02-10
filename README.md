@@ -27,7 +27,7 @@ pip install huggingface-hub safetensors soundfile torch torchaudio
 
 ## ▶️ Quickstart
 
-📌 **NOTE**: the `audio-samples` directory contains downloadable audio samples that you can use to test the codec.
+📌 **NOTE**: the `audio-samples` directory contains audio samples that you can download and use to test the codec.
 
 You can easily load the model using `torch.hub` without cloning the repository:
 
