@@ -48,7 +48,11 @@ REGISTRY = {
     "WavLM": WavLM,
 }
 
-REPO_ID = "lucadellalib/focalcodec"
+DEFAULT_CONFIGS = [
+    "lucadellalib/focalcodec_50hz",
+    "lucadellalib/focalcodec_25hz",
+    "lucadellalib/focalcodec_12_5hz",
+]
 
 
 class FocalCodec(nn.Module):
@@ -136,26 +140,24 @@ class FocalCodec(nn.Module):
         pretrained: "bool" = False,
         **kwargs: "Any",
     ) -> "FocalCodec":
-        """Load model from a configuration file.
-
-        The configuration can be either a local JSON file or a JSON file hosted on Hugging Face Hub.
-        If `pretrained` is set to True, the corresponding pretrained checkpoint is also loaded.
-        The checkpoint is expected to have the same path and name as the configuration file
-        but with a `.safetensors` or `.pt` extension.
+        """Load model from a configuration.
 
         Parameters
         ----------
         config:
-            Path to the configuration file. This can be either:
-            - A local JSON file;
-            - a JSON file hosted on Hugging Face Hub (e.g. "username/repo_name/config.json").
-            `.json` is automatically appended if the given path does not end with `.json`.
+            Configuration source, one of the following:
+              - A local JSON file (e.g. "config.json");
+              - a Hugging Face repository containing "config.json" (e.g. "username/repo_name");
+              - a specific JSON file hosted in a Hugging Face repository (e.g. "username/repo_name/config_xyz.json").
+            If the given file path does not end with `.json`, `.json` is automatically appended.
         pretrained:
-            Whether to load the corresponding pretrained checkpoint. If True, the method will look for a
-            checkpoint file with the same path/URL as the configuration file but with a `.safetensors` or
-            `.pt` extension.
+            Whether to load the corresponding pretrained checkpoint.
+              - If True and a JSON file is specified, the method will look for a checkpoint file with the same
+                path or URL as the configuration file but with a `.safetensors` or `.pt` extension.
+              - If True and a Hugging Face repository is provided, it is assumed that either "model.safetensors"
+                or "model.pt" is available.
         kwargs:
-            Additional keyword arguments to pass to the Hugging Face Hub downloader if
+            Additional keyword arguments to pass to `huggingface_hub.hf_hub_download` if
             fetching the configuration from a remote repository.
 
         Returns
@@ -192,37 +194,41 @@ class FocalCodec(nn.Module):
 
         # Remote
         try:
-            from huggingface_hub import hf_hub_download
+            from huggingface_hub import hf_hub_download, list_repo_files
         except ImportError:
             raise ImportError("`pip install huggingface-hub` to load this model")
 
         try:
-            repo_id = os.path.dirname(config_json)
-            filename = os.path.basename(config_json)
+            list_repo_files(config)
+            is_repo = True
+        except Exception:
+            is_repo = False
+
+        try:
+            repo_id = config if is_repo else os.path.dirname(config_json)
+            filename = "config.json" if is_repo else os.path.basename(config_json)
             config_json = hf_hub_download(repo_id=repo_id, filename=filename, **kwargs)
             with open(config_json) as f:
                 config = json.load(f)
             model = cls(**config)
             if pretrained:
+                filename = "model" if is_repo else f"{os.path.splitext(filename)[0]}"
                 try:
-                    filename = f"{os.path.splitext(filename)[0]}.safetensors"
                     checkpoint = hf_hub_download(
-                        repo_id=repo_id, filename=filename, **kwargs
+                        repo_id=repo_id, filename=f"{filename}.safetensors", **kwargs
                     )
                     state_dict = safetensors_load(checkpoint)
                 except Exception:
                     # If `.safetensors` not found, try `.pt`
-                    filename = f"{os.path.splitext(filename)[0]}.pt"
                     checkpoint = hf_hub_download(
-                        repo_id=repo_id, filename=filename, **kwargs
+                        repo_id=repo_id, filename=f"{filename}.pt", **kwargs
                     )
                     state_dict = torch.load(checkpoint, map_location="cpu")
                 model.load_state_dict(state_dict)
         except Exception as e:
             raise RuntimeError(
                 f"Could not load the specified configuration. "
-                f"Default configurations can be found at the following "
-                f"Hugging Face repository: https://huggingface.co/{REPO_ID}"
+                f"Available default configurations: {DEFAULT_CONFIGS}"
             ) from e
         return model
 
@@ -848,7 +854,7 @@ def test_model() -> "None":
 
 
 def test_batch_invariance(
-    config: "str" = "lucadellalib/focalcodec/LibriTTS960_50Hz",
+    config: "str" = "lucadellalib/focalcodec_50hz",
 ) -> "None":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -889,7 +895,7 @@ def test_performance(
     seconds: "int",
     compile: "Optional[str]" = None,
     fp16: "bool" = False,
-    config: "str" = "lucadellalib/focalcodec/LibriTTS960_50Hz",
+    config: "str" = "lucadellalib/focalcodec_50hz",
     mode: "str" = "encode",
 ) -> "None":
     import logging
@@ -950,7 +956,7 @@ def test_performance(
 
 @torch.no_grad()
 def test_offline(
-    config: "str" = "lucadellalib/focalcodec/LibriTTS960_50Hz",
+    config: "str" = "lucadellalib/focalcodec_50hz",
 ) -> "None":
     try:
         import torchaudio
@@ -1025,7 +1031,7 @@ def test_offline(
 
 @torch.no_grad()
 def test_online(
-    config: "str" = "lucadellalib/focalcodec/LibriTTS960_50Hz",
+    config: "str" = "lucadellalib/focalcodec_50hz",
 ) -> "None":
 
     def overlap_add(
@@ -1194,7 +1200,7 @@ def test_online(
 
 
 if __name__ == "__main__":
-    config = "lucadellalib/focalcodec/LibriTTS960_50Hz"
+    config = "lucadellalib/focalcodec_50hz"
     test_model()
     test_batch_invariance(config)
     test_offline(config=config)

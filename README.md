@@ -5,13 +5,21 @@
 
 A low-bitrate single-codebook 16 kHz speech codec based on [focal modulation](https://arxiv.org/abs/2203.11926).
 
-- **Preprint**: https://arxiv.org/abs/2502.04465
+- 📜 **Preprint**: https://arxiv.org/abs/2502.04465
 
-- **Project Page**: https://lucadellalib.github.io/focalcodec-web/
-
-- **Hugging Face Hub**: https://huggingface.co/lucadellalib/focalcodec
+- 🌐 **Project Page**: https://lucadellalib.github.io/focalcodec-web/
 
 <img src="docs/_static/images/focalcodec.png" width="700">
+
+---------------------------------------------------------------------------------------------------------
+
+## 📌 Available Checkpoints
+
+|                                       Checkpoint                                        | Token Rate (Hz) | Bitrate (kbps) |   Dataset   |
+|:---------------------------------------------------------------------------------------:|:---------------:|:--------------:|:-----------:|
+|   [lucadellalib/focalcodec_50hz](https://huggingface.co/lucadellalib/focalcodec_50hz)   |       50.0      |      0.65      | LibriTTS960 |
+|   [lucadellalib/focalcodec_25hz](https://huggingface.co/lucadellalib/focalcodec_25hz)   |      25.0       |      0.33      | LibriTTS960 |
+| [lucadellalib/focalcodec_12_5hz](https://huggingface.co/lucadellalib/focalcodec_12_5hz) |      12.5       |      0.16      | LibriTTS960 |
 
 ---------------------------------------------------------------------------------------------------------
 
@@ -27,7 +35,7 @@ pip install huggingface-hub safetensors soundfile torch torchaudio
 
 ## ▶️ Quickstart
 
-📌 **NOTE**: the `audio-samples` directory contains audio samples that you can download and use to test the codec.
+**NOTE**: the `audio-samples` directory contains audio samples that you can download and use to test the codec.
 
 You can easily load the model using `torch.hub` without cloning the repository:
 
@@ -35,8 +43,8 @@ You can easily load the model using `torch.hub` without cloning the repository:
 import torch
 import torchaudio
 
-# Load FocalCodec model (see available configurations at https://huggingface.co/lucadellalib/focalcodec)
-config = "lucadellalib/focalcodec/LibriTTS960_50Hz"
+# Load FocalCodec model
+config = "lucadellalib/focalcodec_50hz"
 codec = torch.hub.load("lucadellalib/focalcodec", "focalcodec", config=config)
 codec.eval().requires_grad_(False)
 
@@ -74,7 +82,7 @@ Once installed, you can import it in your scripts:
 ```python
 import focalcodec
 
-config = "lucadellalib/focalcodec/LibriTTS960_50Hz"
+config = "lucadellalib/focalcodec_50hz"
 codec = focalcodec.FocalCodec.from_pretrained(config)
 ```
 

@@ -31,16 +31,13 @@ except ImportError:
     raise ImportError("`pip install torchaudio` to run this script")
 
 
-__all__ = []
-
-
 def main(
     input_file: "str",
     output_file: "str" = "reconstruction.wav",
-    config: "str" = "lucadellalib/focalcodec/LibriTTS960_50Hz",
+    config: "str" = "lucadellalib/focalcodec_50hz",
     reference_files: "Optional[Sequence[str]]" = None,
 ) -> "None":
-    # Load FocalCodec model (see available configurations at https://huggingface.co/lucadellalib/focalcodec)
+    # Load FocalCodec model
     codec = torch.hub.load("lucadellalib/focalcodec", "focalcodec", config=config)
     codec.eval().requires_grad_(False)
 
@@ -107,7 +104,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--config",
         type=str,
-        default="lucadellalib/focalcodec/LibriTTS960_50Hz",
+        default="lucadellalib/focalcodec_50hz",
         help="FocalCodec configuration",
     )
     parser.add_argument(

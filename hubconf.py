@@ -30,7 +30,7 @@ dependencies = [
 
 
 def focalcodec(
-    config: "str" = "lucadellalib/focalcodec/LibriTTS960_50Hz",
+    config: "str" = "lucadellalib/focalcodec_50hz",
     pretrained: "bool" = True,
     **kwargs: "Any",
 ) -> "FocalCodec":
@@ -39,14 +39,17 @@ def focalcodec(
     Parameters
     ----------
     config:
-        Path to the configuration file. This can be either:
-        - A local JSON file;
-        - a JSON file hosted on Hugging Face Hub (e.g. "username/repo_name/config.json").
-        `.json` is automatically appended if the given path does not end with `.json`.
+        Configuration source, one of the following:
+          - A local JSON file (e.g. "config.json");
+          - a Hugging Face repository containing "config.json" (e.g. "username/repo_name");
+          - a specific JSON file hosted in a Hugging Face repository (e.g. "username/repo_name/config_xyz.json").
+        If the given file path does not end with `.json`, `.json` is automatically appended.
     pretrained:
-        Whether to load the corresponding pretrained checkpoint. If True, the method will look for a
-        checkpoint file with the same path/URL as the configuration file but with a `.safetensors` or
-        `.pt` extension.
+        Whether to load the corresponding pretrained checkpoint.
+          - If True and a JSON file is specified, the method will look for a checkpoint file with the same
+            path or URL as the configuration file but with a `.safetensors` or `.pt` extension.
+          - If True and a Hugging Face repository is provided, it is assumed that either "model.safetensors"
+            or "model.pt" is available.
 
     """
     codec = FocalCodec.from_config(config, pretrained, **kwargs)
