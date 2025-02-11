@@ -45,7 +45,7 @@ import torchaudio
 
 # Load FocalCodec model
 config = "lucadellalib/focalcodec_50hz"
-codec = torch.hub.load("lucadellalib/focalcodec", "focalcodec", config=config)
+codec = torch.hub.load("lucadellalib/focalcodec", "focalcodec", config=config, force_reload=True)
 codec.eval().requires_grad_(False)
 
 # Load and preprocess the input audio

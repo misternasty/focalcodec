@@ -38,7 +38,9 @@ def main(
     reference_files: "Optional[Sequence[str]]" = None,
 ) -> "None":
     # Load FocalCodec model
-    codec = torch.hub.load("lucadellalib/focalcodec", "focalcodec", config=config)
+    codec = torch.hub.load(
+        "lucadellalib/focalcodec", "focalcodec", config=config, force_reload=True
+    )
     codec.eval().requires_grad_(False)
 
     # Process reference files if provided
