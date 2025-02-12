@@ -1,4 +1,4 @@
-# FocalCodec
+# ⚡ FocalCodec
 
 ![License](https://img.shields.io/github/license/lucadellalib/focalcodec)
 ![Stars](https://img.shields.io/github/stars/lucadellalib/focalcodec?style=social)
@@ -8,6 +8,8 @@ A low-bitrate single-codebook 16 kHz speech codec based on [focal modulation](ht
 - 📜 **Preprint**: https://arxiv.org/abs/2502.04465
 
 - 🌐 **Project Page**: https://lucadellalib.github.io/focalcodec-web/
+
+- 🔊 **Downstream Tasks**: https://github.com/lucadellalib/audiocodecs
 
 <img src="docs/_static/images/focalcodec.png" width="700">
 
