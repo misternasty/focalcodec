@@ -183,11 +183,13 @@ class FocalCodec(nn.Module):
             model = cls(**config)
             if pretrained:
                 try:
-                    checkpoint = f"{os.path.splitext(config_json)[0]}.safetensors"
+                    #checkpoint = f"{os.path.splitext(config_json)[0]}.safetensors"
+                    checkpoint = f"{os.path.dirname(config_json)}/model.safetensors"
                     state_dict = safetensors_load(checkpoint)
                 except Exception:
                     # If `.safetensors` not found, try `.pt`
-                    checkpoint = f"{os.path.splitext(config_json)[0]}.pt"
+                    #checkpoint = f"{os.path.splitext(config_json)[0]}.pt"
+                    checkpoint = f"{os.path.dirname(config_json)}/model.pt"
                     state_dict = torch.load(checkpoint, map_location="cpu")
                 model.load_state_dict(state_dict)
             return model
